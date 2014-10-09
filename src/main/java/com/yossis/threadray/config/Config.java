@@ -43,6 +43,10 @@ public class Config {
         return props.getProperty(key);
     }
 
+    public String getProperty(String key, String defaultValue) {
+        return props.getProperty(key, defaultValue);
+    }
+
     public int getIntProperty(String key, int defaultValue) {
         String property = getProperty(key);
         if (property != null) {

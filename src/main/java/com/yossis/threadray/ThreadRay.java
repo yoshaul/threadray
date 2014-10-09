@@ -8,6 +8,11 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Main class.
@@ -19,6 +24,7 @@ public class ThreadRay {
     private JFrame main;
     private ThreadRayConfig config;
     private AppWindowAdapter windowListener;
+    private JTextArea textArea;
 
     public static void main(String[] args) {
         new ThreadRay().start();
@@ -29,7 +35,7 @@ public class ThreadRay {
         config = ThreadRayConfig.loadConfig();
 
         main = new JFrame("ThreadRay");
-        main.setLayout(new GridLayout(3, 1));
+        main.setLayout(new GridLayout(1, 1));
         windowListener = new AppWindowAdapter();
         main.addWindowListener(windowListener);
 
@@ -42,9 +48,10 @@ public class ThreadRay {
         menuBar.add(fileMenu);
 
         // main text area
-        JTextArea textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
+        textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
         textArea.setEditable(false);
-        main.add(textArea);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        main.add(scrollPane);
 
         loadLocation();
         main.setVisible(true);
@@ -63,13 +70,23 @@ public class ThreadRay {
         JMenuItem openMenuItem = new JMenuItem("Open", 'O');
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
         openMenuItem.addActionListener(e -> {
-            JFileChooser fc = new JFileChooser();
+            File lastFolder = config.getLastOpenDirectory();
+            JFileChooser fc = new JFileChooser(lastFolder);
             //Handle open button action.
             int returnVal = fc.showOpenDialog(main);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                System.out.println("file = " + file);
+                config.setLastOpenFolder(file.getParentFile());
+                try {
+                    List<String> lines = Files.readAllLines(file.toPath());
+                    String content = String.join("\n", lines);
+                    textArea.setText(content);
+                } catch (IOException e1) {
+                    StringWriter stringWriter = new StringWriter();
+                    e1.printStackTrace(new PrintWriter(stringWriter));
+                    textArea.setText("Failed to load content from " + file.getAbsolutePath() + ":\n" + stringWriter);
+                }
             }
         });
         fileMenu.add(openMenuItem);

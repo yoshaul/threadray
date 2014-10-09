@@ -10,8 +10,6 @@ import java.io.IOException;
  * @author Yossi Shaul
  */
 public class ThreadRayConfig extends Config {
-    public static final String LAST_OPEN_LOCATION = "gui.last.open";
-
     public ThreadRayConfig(File configFile) {
         super(configFile);
     }
@@ -48,5 +46,14 @@ public class ThreadRayConfig extends Config {
         int width = getIntProperty("gui.width", ((int) tk.getScreenSize().getWidth()));
         int height = getIntProperty("gui.height", ((int) tk.getScreenSize().getHeight()));
         return new Dimension(width, height);
+    }
+
+    public File getLastOpenDirectory() {
+        String lastOpen = getProperty("gui.last.open", System.getProperty("user.dir"));
+        return new File(lastOpen);
+    }
+
+    public void setLastOpenFolder(File parentFile) {
+        setProperty("gui.last.open", parentFile.getAbsolutePath());
     }
 }
