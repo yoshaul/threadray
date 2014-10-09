@@ -47,6 +47,10 @@ public class ThreadRay {
         JMenu fileMenu = createFileMenu();
         menuBar.add(fileMenu);
 
+        // about menu
+        JMenu helpMenu = createHelpMenu();
+        menuBar.add(helpMenu);
+
         // main text area
         textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
         textArea.setEditable(false);
@@ -61,10 +65,6 @@ public class ThreadRay {
         setLookAndFeel();
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
-        // exit
-        JMenuItem exitMenuItem = new JMenuItem("Exit", 'X');
-        exitMenuItem.addActionListener(e -> windowListener.windowClosing(null));
-        fileMenu.add(exitMenuItem);
 
         // open
         JMenuItem openMenuItem = new JMenuItem("Open", 'O');
@@ -91,7 +91,24 @@ public class ThreadRay {
         });
         fileMenu.add(openMenuItem);
 
+        // exit
+        JMenuItem exitMenuItem = new JMenuItem("Exit", 'X');
+        exitMenuItem.addActionListener(e -> windowListener.windowClosing(null));
+        fileMenu.add(exitMenuItem);
+
         return fileMenu;
+    }
+
+    private JMenu createHelpMenu() {
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic('H');
+
+        JMenuItem aboutMenu = new JMenuItem("About...");
+        aboutMenu.addActionListener(e -> JOptionPane.showMessageDialog(main, "Copyright 2014 Yossi Shaul"));
+        helpMenu.add(aboutMenu);
+
+        return helpMenu;
+
     }
 
     private void setLookAndFeel() {
