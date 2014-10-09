@@ -4,7 +4,7 @@ import com.yossis.threadray.config.ThreadRayConfig;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -34,10 +34,12 @@ public class ThreadRay {
         main.addWindowListener(windowListener);
 
         // menu bar
-        MenuBar menuBar = new MenuBar();
-        Menu fileMenu = createFileMenu();
+        JMenuBar menuBar = new JMenuBar();
+        main.setJMenuBar(menuBar);
+
+        // file menu
+        JMenu fileMenu = createFileMenu();
         menuBar.add(fileMenu);
-        main.setMenuBar(menuBar);
 
         // main text area
         JTextArea textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
@@ -48,16 +50,18 @@ public class ThreadRay {
         main.setVisible(true);
     }
 
-    private Menu createFileMenu() {
+    private JMenu createFileMenu() {
         setLookAndFeel();
-        Menu fileMenu = new Menu("File");
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic('F');
         // exit
-        MenuItem exitMenuItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
+        JMenuItem exitMenuItem = new JMenuItem("Exit", 'X');
         exitMenuItem.addActionListener(e -> windowListener.windowClosing(null));
         fileMenu.add(exitMenuItem);
 
         // open
-        MenuItem openMenuItem = new MenuItem("Open", new MenuShortcut(KeyEvent.VK_O));
+        JMenuItem openMenuItem = new JMenuItem("Open", 'O');
+        openMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
         openMenuItem.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             //Handle open button action.
