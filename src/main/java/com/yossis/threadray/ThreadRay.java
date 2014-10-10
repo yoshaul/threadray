@@ -1,6 +1,7 @@
 package com.yossis.threadray;
 
 import com.yossis.threadray.config.ThreadRayConfig;
+import com.yossis.threadray.parser.Parser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,7 @@ public class ThreadRay {
     private ThreadRayConfig config;
     private AppWindowAdapter windowListener;
     private JTextArea textArea;
+    private JScrollPane scrollPane;
 
     public static void main(String[] args) {
         new ThreadRay().start();
@@ -54,7 +56,7 @@ public class ThreadRay {
         // main text area
         textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane = new JScrollPane(textArea);
         main.add(scrollPane);
 
         loadLocation();
@@ -82,6 +84,18 @@ public class ThreadRay {
                     List<String> lines = Files.readAllLines(file.toPath());
                     String content = String.join("\n", lines);
                     textArea.setText(content);
+                    // scroll back to the top
+                    SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+                    // parse
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            new Parser(content).parse();
+                        } catch (IOException e1) {
+                            StringWriter stringWriter = new StringWriter();
+                            e1.printStackTrace(new PrintWriter(stringWriter));
+                            textArea.setText("Failed to parse file " + file.getAbsolutePath() + ":\n" + stringWriter);
+                        }
+                    });
                 } catch (IOException e1) {
                     StringWriter stringWriter = new StringWriter();
                     e1.printStackTrace(new PrintWriter(stringWriter));
@@ -108,7 +122,6 @@ public class ThreadRay {
         helpMenu.add(aboutMenu);
 
         return helpMenu;
-
     }
 
     private void setLookAndFeel() {
