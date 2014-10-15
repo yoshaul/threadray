@@ -1,6 +1,7 @@
 package com.yossis.threadray;
 
 import com.yossis.threadray.config.ThreadRayConfig;
+import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.parser.Parser;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Main class.
@@ -28,6 +30,7 @@ public class ThreadRay {
     private JTextArea textArea;
     private JScrollPane scrollPane;
     private JPopupMenu popupMenu;
+    private JTextArea leftTextArea;
 
     public static void main(String[] args) {
         new ThreadRay().start();
@@ -58,7 +61,11 @@ public class ThreadRay {
         textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
         textArea.setEditable(false);
         scrollPane = new JScrollPane(textArea);
-        main.add(scrollPane);
+
+        leftTextArea = new JTextArea();
+        JScrollPane leftScrollPane = new JScrollPane(leftTextArea);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftScrollPane, scrollPane);
+        main.add(splitPane);
 
         createPopupMenu();
 
@@ -114,7 +121,11 @@ public class ThreadRay {
                     // parse
                     SwingUtilities.invokeLater(() -> {
                         try {
-                            new Parser(content).parse();
+                            Parser parser = new Parser(content).parse();
+                            String threadNames = parser.getThreads().stream()
+                                    .map(ThreadElement::getName)
+                                    .collect(Collectors.joining("\n"));
+                            leftTextArea.setText(threadNames);
                         } catch (IOException e1) {
                             StringWriter stringWriter = new StringWriter();
                             e1.printStackTrace(new PrintWriter(stringWriter));

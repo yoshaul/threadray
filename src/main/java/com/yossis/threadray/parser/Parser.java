@@ -26,7 +26,7 @@ public class Parser {
         return threads;
     }
 
-    public void parse() throws IOException {
+    public Parser parse() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(content));
         String line;
         while ((line = reader.readLine()) != null) {
@@ -40,6 +40,7 @@ public class Parser {
         for (ThreadElement thread : threads) {
             System.out.println(thread.getName());
         }
+        return this;
     }
 
     private void parseThread(String threadTitle, BufferedReader reader) throws IOException {
