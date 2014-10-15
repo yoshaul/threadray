@@ -5,9 +5,9 @@ import com.yossis.threadray.parser.Parser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +27,7 @@ public class ThreadRay {
     private AppWindowAdapter windowListener;
     private JTextArea textArea;
     private JScrollPane scrollPane;
+    private JPopupMenu popupMenu;
 
     public static void main(String[] args) {
         new ThreadRay().start();
@@ -59,8 +60,32 @@ public class ThreadRay {
         scrollPane = new JScrollPane(textArea);
         main.add(scrollPane);
 
+        createPopupMenu();
+
+        // popup menu for the main text area
+        textArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+
         loadLocation();
         main.setVisible(true);
+    }
+
+    private void createPopupMenu() {
+        popupMenu = new JPopupMenu();
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+        copy.addActionListener(e -> {
+            String selectedText = textArea.getSelectedText();
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(new StringSelection(selectedText), new StringSelection(selectedText));
+        });
+        popupMenu.add(copy);
     }
 
     private JMenu createFileMenu() {
