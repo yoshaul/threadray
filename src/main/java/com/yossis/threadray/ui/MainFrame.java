@@ -1,4 +1,4 @@
-package com.yossis.threadray;
+package com.yossis.threadray.ui;
 
 import com.yossis.threadray.config.ThreadRayConfig;
 import com.yossis.threadray.model.ThreadElement;
@@ -25,8 +25,7 @@ public class MainFrame extends JFrame {
 
     private ThreadRayConfig config;
     private AppWindowAdapter windowListener;
-    private JTextArea textArea;
-    private JScrollPane scrollPane;
+    private TextPanel textPanel;
     private JPopupMenu popupMenu;
     private JTextArea leftTextArea;
 
@@ -39,36 +38,23 @@ public class MainFrame extends JFrame {
 
         config = ThreadRayConfig.loadConfig();
 
-        setLayout(new GridLayout(1, 1));
         windowListener = new AppWindowAdapter();
         addWindowListener(windowListener);
 
-        // menu bar
-        JMenuBar menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
-
-        // file menu
-        JMenu fileMenu = createFileMenu();
-        menuBar.add(fileMenu);
-
-        // about menu
-        JMenu helpMenu = createHelpMenu();
-        menuBar.add(helpMenu);
+        createMenuBar();
 
         // main text area
-        textArea = new JTextArea("יוסי ואריאל טליה ועלמה ליטל המקסימים");
-        textArea.setEditable(false);
-        scrollPane = new JScrollPane(textArea);
+        textPanel = new TextPanel();
 
         leftTextArea = new JTextArea();
         JScrollPane leftScrollPane = new JScrollPane(leftTextArea);
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftScrollPane, scrollPane);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftScrollPane, textPanel);
         add(splitPane);
 
         createPopupMenu();
 
         // popup menu for the main text area
-        textArea.addMouseListener(new MouseAdapter() {
+        textPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
@@ -81,12 +67,26 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+    private void createMenuBar() {
+        // menu bar
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+
+        // file menu
+        JMenu fileMenu = createFileMenu();
+        menuBar.add(fileMenu);
+
+        // about menu
+        JMenu helpMenu = createHelpMenu();
+        menuBar.add(helpMenu);
+    }
+
     private void createPopupMenu() {
         popupMenu = new JPopupMenu();
         JMenuItem copy = new JMenuItem("Copy");
         copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
         copy.addActionListener(e -> {
-            String selectedText = textArea.getSelectedText();
+            String selectedText = textPanel.getSelectedText();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(selectedText), new StringSelection(selectedText));
         });
@@ -113,9 +113,7 @@ public class MainFrame extends JFrame {
                 try {
                     java.util.List<String> lines = Files.readAllLines(file.toPath());
                     String content = String.join("\n", lines);
-                    textArea.setText(content);
-                    // scroll back to the top
-                    SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+                    textPanel.setText(content);
                     // parse
                     SwingUtilities.invokeLater(() -> {
                         try {
@@ -127,13 +125,13 @@ public class MainFrame extends JFrame {
                         } catch (IOException e1) {
                             StringWriter stringWriter = new StringWriter();
                             e1.printStackTrace(new PrintWriter(stringWriter));
-                            textArea.setText("Failed to parse file " + file.getAbsolutePath() + ":\n" + stringWriter);
+                            textPanel.setText("Failed to parse file " + file.getAbsolutePath() + ":\n" + stringWriter);
                         }
                     });
                 } catch (IOException e1) {
                     StringWriter stringWriter = new StringWriter();
                     e1.printStackTrace(new PrintWriter(stringWriter));
-                    textArea.setText("Failed to load content from " + file.getAbsolutePath() + ":\n" + stringWriter);
+                    textPanel.setText("Failed to load content from " + file.getAbsolutePath() + ":\n" + stringWriter);
                 }
             }
         });

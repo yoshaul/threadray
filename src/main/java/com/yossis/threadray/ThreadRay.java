@@ -1,5 +1,7 @@
 package com.yossis.threadray;
 
+import com.yossis.threadray.ui.MainFrame;
+
 import javax.swing.*;
 
 /**
