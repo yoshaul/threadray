@@ -6,9 +6,9 @@ import com.yossis.threadray.parser.Parser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
+import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,7 +26,6 @@ public class MainFrame extends JFrame {
     private ThreadRayConfig config;
     private AppWindowAdapter windowListener;
     private TextPanel textPanel;
-    private JPopupMenu popupMenu;
     private JTextArea leftTextArea;
 
     public MainFrame(String title) throws HeadlessException {
@@ -35,33 +34,22 @@ public class MainFrame extends JFrame {
     }
 
     private void setup() {
-
         config = ThreadRayConfig.loadConfig();
 
         windowListener = new AppWindowAdapter();
         addWindowListener(windowListener);
 
-        createMenuBar();
+        setLookAndFeel();
 
         // main text area
         textPanel = new TextPanel();
+
+        createMenuBar();
 
         leftTextArea = new JTextArea();
         JScrollPane leftScrollPane = new JScrollPane(leftTextArea);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftScrollPane, textPanel);
         add(splitPane);
-
-        createPopupMenu();
-
-        // popup menu for the main text area
-        textPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
 
         loadLocation();
         setVisible(true);
@@ -73,28 +61,16 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
 
         // file menu
-        JMenu fileMenu = createFileMenu();
-        menuBar.add(fileMenu);
+        menuBar.add(createFileMenu());
+
+        // edit menu
+        menuBar.add(createEditMenu());
 
         // about menu
-        JMenu helpMenu = createHelpMenu();
-        menuBar.add(helpMenu);
-    }
-
-    private void createPopupMenu() {
-        popupMenu = new JPopupMenu();
-        JMenuItem copy = new JMenuItem("Copy");
-        copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
-        copy.addActionListener(e -> {
-            String selectedText = textPanel.getSelectedText();
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(new StringSelection(selectedText), new StringSelection(selectedText));
-        });
-        popupMenu.add(copy);
+        menuBar.add(createHelpMenu());
     }
 
     private JMenu createFileMenu() {
-        setLookAndFeel();
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
@@ -144,6 +120,21 @@ public class MainFrame extends JFrame {
 
         return fileMenu;
     }
+
+    private Component createEditMenu() {
+        JMenu edit = new JMenu("Edit");
+        edit.setMnemonic('E');
+        edit.add(createCopyMenuItem());
+        return edit;
+    }
+
+    private JMenuItem createCopyMenuItem() {
+        JMenuItem copy = new JMenuItem("Copy");
+        copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+        copy.addActionListener(new CopyActionListener(textPanel.getTextArea()));
+        return copy;
+    }
+
 
     private JMenu createHelpMenu() {
         JMenu helpMenu = new JMenu("Help");
