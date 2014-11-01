@@ -60,9 +60,10 @@ public class Parser {
     }
 
     private ThreadElement parseThreadTitle(String threadTitle) {
-        int threadNameEnd = threadTitle.indexOf("\"", 1) + 1;
-        ThreadElement thread = new ThreadElement(threadTitle.substring(0, threadNameEnd));
-        String[] tokens = threadTitle.substring(threadNameEnd + 1).split(" ");
+        int threadNameEnd = threadTitle.indexOf("\"", 1);
+        String threadName = threadTitle.substring(1, threadNameEnd);
+        ThreadElement thread = new ThreadElement(threadName);
+        String[] tokens = threadTitle.substring(threadNameEnd + 2).split(" ");
         int i = 0;
         if ("daemon".equals(tokens[i])) {
             thread.setDaemon(true);
