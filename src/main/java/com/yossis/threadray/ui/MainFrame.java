@@ -7,6 +7,7 @@ import com.yossis.threadray.parser.Parser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -72,11 +73,11 @@ public class MainFrame extends JFrame {
 
     private JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("File");
-        fileMenu.setMnemonic('F');
+        fileMenu.setMnemonic(KeyEvent.VK_F);
 
         // open
-        JMenuItem openMenuItem = new JMenuItem("Open", 'O');
-        openMenuItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+        JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
+        openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         openMenuItem.addActionListener(e -> {
             File lastFolder = config.getLastOpenDirectory();
             JFileChooser fc = new JFileChooser(lastFolder);
@@ -113,8 +114,12 @@ public class MainFrame extends JFrame {
         });
         fileMenu.add(openMenuItem);
 
+        // separator
+        fileMenu.addSeparator();
+
         // exit
-        JMenuItem exitMenuItem = new JMenuItem("Exit", 'X');
+        JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
+        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
         exitMenuItem.addActionListener(e -> windowListener.windowClosing(null));
         fileMenu.add(exitMenuItem);
 
@@ -123,14 +128,14 @@ public class MainFrame extends JFrame {
 
     private Component createEditMenu() {
         JMenu edit = new JMenu("Edit");
-        edit.setMnemonic('E');
+        edit.setMnemonic(KeyEvent.VK_E);
         edit.add(createCopyMenuItem());
         return edit;
     }
 
     private JMenuItem createCopyMenuItem() {
-        JMenuItem copy = new JMenuItem("Copy");
-        copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+        JMenuItem copy = new JMenuItem("Copy", KeyEvent.VK_C);
+        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
         copy.addActionListener(new CopyActionListener(textPanel.getTextArea()));
         return copy;
     }
@@ -138,7 +143,7 @@ public class MainFrame extends JFrame {
 
     private JMenu createHelpMenu() {
         JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic('H');
+        helpMenu.setMnemonic(KeyEvent.VK_H);
 
         JMenuItem aboutMenu = new JMenuItem("About...");
         aboutMenu.addActionListener(e -> JOptionPane.showMessageDialog(MainFrame.this, "Copyright 2014 Yossi Shaul"));
