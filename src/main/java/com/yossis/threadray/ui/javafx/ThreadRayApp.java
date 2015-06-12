@@ -3,11 +3,8 @@ package com.yossis.threadray.ui.javafx;
 import com.yossis.threadray.config.ThreadRayConfig;
 import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.parser.Parser;
-import com.yossis.threadray.ui.javafx.model.ThreadElementFx;
 import com.yossis.threadray.util.Resources;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -35,7 +32,7 @@ public class ThreadRayApp extends Application {
     private ThreadRayConfig config;
     private Stage stage;
     private BorderPane rootLayout;
-    private ObservableList<ThreadElementFx> threadsFx = FXCollections.observableArrayList();
+    private ThreadsController threadsController;
 
     public static void main(String[] args) {
         launch(args);
@@ -52,8 +49,8 @@ public class ThreadRayApp extends Application {
         stage.setOnCloseRequest(e -> closeApp());
 
         initLayout();
-        loadThreadDump(null);
         showThreadsMain();
+        loadThreadDump(null);
         loadLastLocation();
         stage.show();
     }
@@ -71,13 +68,13 @@ public class ThreadRayApp extends Application {
     }
 
     public void showThreadsMain() throws IOException {
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayApp.fxml");
+        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayApp2.fxml");
 
         AnchorPane personOverview = loader.load();
         rootLayout.setCenter(personOverview);
 
-        ThreadsController controller = loader.getController();
-        controller.setApp(this);
+        threadsController = loader.getController();
+        threadsController.setApp(this);
     }
 
     private FXMLLoader getFxmlLoader(String fxmlResource) {
@@ -96,8 +93,9 @@ public class ThreadRayApp extends Application {
             Files.copy(path, out);
             List<ThreadElement> threads = new Parser(out.toString()).parse().getThreads();
 
-            threadsFx.remove(0, threadsFx.size());
-            threads.stream().forEach(t -> threadsFx.add(new ThreadElementFx(t)));
+            stage.setTitle("ThreadRay - " + path.getFileName());
+
+            threadsController.update(threads);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,10 +103,6 @@ public class ThreadRayApp extends Application {
 
     public Window getPrimaryStage() {
         return stage;
-    }
-
-    public ObservableList<ThreadElementFx> getThreadsFx() {
-        return threadsFx;
     }
 
     private void loadLastLocation() {
