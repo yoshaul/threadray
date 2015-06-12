@@ -36,27 +36,29 @@ public class Parser {
             }
         }
 
-        System.out.println("Found " + threads.size() + " threads:");
+        /*System.out.println("Found " + threads.size() + " threads:");
         for (ThreadElement thread : threads) {
             System.out.println(thread.getName());
-        }
+        }*/
         return this;
     }
 
     private void parseThread(String threadTitle, BufferedReader reader) throws IOException {
+        StringBuilder sb = new StringBuilder(threadTitle).append("\n");
         ThreadElement thread = parseThreadTitle(threadTitle);
         threads.add(thread);
 
         // parse optional state
         String line = reader.readLine();
-        if (line.isEmpty()) {
-            return; // no state and no stack elements (e.g., GC worker threads)
+        if (!line.isEmpty()) {  // can be empty is no state and no stack elements (e.g., GC worker threads)
+            sb.append(line).append("\n");
+            parseState(thread, line);
+
+            // parse optional stack elements
+            parseStackElements(thread, reader, sb);
         }
-        parseState(thread, line);
 
-        // parse optional stack elements
-        parseStackElements(thread, reader);
-
+        thread.setThreadDump(sb.toString());
     }
 
     private ThreadElement parseThreadTitle(String threadTitle) {
@@ -87,13 +89,13 @@ public class Parser {
         thread.setState(stateLine);
     }
 
-    private void parseStackElements(ThreadElement thread, BufferedReader reader) throws IOException {
+    private void parseStackElements(ThreadElement thread, BufferedReader reader, StringBuilder sb) throws IOException {
         String line;
         while ((line = reader.readLine()) != null) {
             if (line.isEmpty()) {
-                return; // no state and no stack elements (e.g., GC worker threads)
+                return; // done parsing current thread
             }
-
+            sb.append(line).append("\n");
             if (line.trim().startsWith("at")) {
                 StackElement stackElement = new StackElement(line);
                 thread.addStackElement(stackElement);

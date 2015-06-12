@@ -1,4 +1,4 @@
-package com.yossis.threadray.ui;
+package com.yossis.threadray.ui.swing;
 
 import com.yossis.threadray.config.ThreadRayConfig;
 import com.yossis.threadray.model.ThreadElement;

@@ -29,6 +29,10 @@ public class ThreadElement {
     private boolean daemon;
     private String state;
     private List<StackElement> stackElements;
+    /**
+     * The plain text from the stack dump representing the current thread
+     */
+    private String threadDump;
 
     public ThreadElement(String name) {
         this.name = name;
@@ -95,5 +99,13 @@ public class ThreadElement {
 
     public List<StackElement> getStackElements() {
         return stackElements;
+    }
+
+    public void setThreadDump(String threadDump) {
+        this.threadDump = threadDump;
+    }
+
+    public String getThreadDump() {
+        return threadDump;
     }
 }

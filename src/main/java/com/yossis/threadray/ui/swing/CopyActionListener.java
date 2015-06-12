@@ -1,4 +1,4 @@
-package com.yossis.threadray.ui;
+package com.yossis.threadray.ui.swing;
 
 import javax.swing.*;
 import java.awt.*;
