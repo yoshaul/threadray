@@ -32,7 +32,7 @@ public class ThreadRayApp extends Application {
     private ThreadRayConfig config;
     private Stage stage;
     private BorderPane rootLayout;
-    private ThreadsController threadsController;
+    private ThreadRayThreadsController threadsController;
 
     public static void main(String[] args) {
         launch(args);
@@ -57,9 +57,9 @@ public class ThreadRayApp extends Application {
 
     private void initLayout() throws IOException {
         // loaf the root layout and initialize
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayLayout.fxml");
+        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayRootLayout.fxml");
         rootLayout = loader.load();
-        RootController controller = loader.getController();
+        ThreadRayRootController controller = loader.getController();
         controller.setApp(this);
 
         // display the root layout scene
@@ -68,7 +68,7 @@ public class ThreadRayApp extends Application {
     }
 
     public void showThreadsMain() throws IOException {
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayApp2.fxml");
+        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayThreadsLayout2.fxml");
 
         AnchorPane personOverview = loader.load();
         rootLayout.setCenter(personOverview);

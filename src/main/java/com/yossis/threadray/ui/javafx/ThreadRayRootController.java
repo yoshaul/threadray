@@ -12,7 +12,7 @@ import java.io.File;
  *
  * @author Yossi Shaul
  */
-public class RootController {
+public class ThreadRayRootController {
 
     private ThreadRayApp app;
     private ThreadRayConfig config;

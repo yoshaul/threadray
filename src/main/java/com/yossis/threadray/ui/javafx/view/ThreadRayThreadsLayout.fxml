@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yossis.threadray.ui.javafx.ThreadsController">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.yossis.threadray.ui.javafx.ThreadRayThreadsController">
     <children>
         <SplitPane dividerPositions="0.29797979797979796" layoutX="100.0" layoutY="87.0" prefHeight="400.0"
                    prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
