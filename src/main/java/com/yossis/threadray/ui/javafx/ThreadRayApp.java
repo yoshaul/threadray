@@ -48,31 +48,28 @@ public class ThreadRayApp extends Application {
         stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_032.png")));
         stage.setOnCloseRequest(e -> closeApp());
 
-        initLayout();
-        showThreadsMain();
-        loadThreadDump(null);
+        loadRootLayout();
+        loadThreadsMainLayout();
         loadLastLocation();
+
+        loadThreadDump(null);
+
+        Scene scene = new Scene(rootLayout);
+        stage.setScene(scene);
         stage.show();
     }
 
-    private void initLayout() throws IOException {
-        // loaf the root layout and initialize
+    private void loadRootLayout() throws IOException {
         FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayRootLayout.fxml");
         rootLayout = loader.load();
         ThreadRayRootController controller = loader.getController();
         controller.setApp(this);
-
-        // display the root layout scene
-        Scene scene = new Scene(rootLayout);
-        stage.setScene(scene);
     }
 
-    public void showThreadsMain() throws IOException {
+    public void loadThreadsMainLayout() throws IOException {
         FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayThreadsLayout2.fxml");
-
         AnchorPane personOverview = loader.load();
         rootLayout.setCenter(personOverview);
-
         threadsController = loader.getController();
         threadsController.setApp(this);
     }
@@ -115,13 +112,13 @@ public class ThreadRayApp extends Application {
         stage.setWidth(size.getWidth());
     }
 
-    private void setLastLocation() {
+    private void setLastStageLocation() {
         config.setLocation(new Point((int) stage.getX(), (int) stage.getY()));
         config.setWindowSize(new Dimension((int) stage.getWidth(), (int) stage.getHeight()));
     }
 
     public void closeApp() {
-        setLastLocation();
+        setLastStageLocation();
         config.save();
         System.exit(0);
     }
