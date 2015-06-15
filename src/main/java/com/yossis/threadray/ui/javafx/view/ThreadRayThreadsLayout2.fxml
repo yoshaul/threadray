@@ -16,8 +16,9 @@
                                    prefWidth="175.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columns>
+                                <TableColumn fx:id="threadStateColumn" prefWidth="75.0" text="State"/>
                                 <TableColumn fx:id="threadNameColumn" editable="false" maxWidth="500.0" minWidth="100.0"
-                                             prefWidth="250.0" sortable="false" text="Threads"/>
+                                             prefWidth="200.0" sortable="false" text="Threads"/>
                             </columns>
                         </TableView>
                     </children>

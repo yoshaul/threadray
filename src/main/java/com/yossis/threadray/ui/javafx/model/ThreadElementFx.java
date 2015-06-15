@@ -13,12 +13,14 @@ import javafx.beans.property.StringProperty;
 public class ThreadElementFx {
     private final ThreadElement threadElement;
     private final StringProperty threadName;
+    private final StringProperty threadState;
     private final StringProperty threadDump;
     private final SimpleLongProperty threadId;
 
     public ThreadElementFx(ThreadElement t) {
         threadElement = t;
         this.threadName = new SimpleStringProperty(t.getName());
+        this.threadState = new SimpleStringProperty(t.getState());
         this.threadDump = new SimpleStringProperty(t.getThreadDump());
         this.threadId = new SimpleLongProperty(t.getThreadId());
     }
@@ -29,6 +31,10 @@ public class ThreadElementFx {
 
     public StringProperty getThreadName() {
         return threadName;
+    }
+
+    public StringProperty getThreadState() {
+        return threadState;
     }
 
     public String getThreadDump() {

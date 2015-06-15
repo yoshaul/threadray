@@ -26,6 +26,8 @@ public class ThreadRayThreadsController {
     @FXML
     private TableColumn<ThreadElementFx, String> threadNameColumn;
     @FXML
+    private TableColumn<ThreadElementFx, String> threadStateColumn;
+    @FXML
     private Label threadNameLabel;
     @FXML
     private Label threadIdLabel;
@@ -37,6 +39,7 @@ public class ThreadRayThreadsController {
     @FXML
     private void initialize() {
         threadNameColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadName());
+        threadStateColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadState());
 
         threadsTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showThreadDetails(newValue));
