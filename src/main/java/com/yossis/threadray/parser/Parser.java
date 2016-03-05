@@ -62,22 +62,26 @@ public class Parser {
     }
 
     private ThreadElement parseThreadTitle(String threadTitle) {
-        int threadNameEnd = threadTitle.indexOf("\"", 1);
-        String threadName = threadTitle.substring(1, threadNameEnd);
-        ThreadElement thread = new ThreadElement(threadName);
-        String[] tokens = threadTitle.substring(threadNameEnd + 2).split(" ");
-        int i = 0;
-        if ("daemon".equals(tokens[i])) {
-            thread.setDaemon(true);
-            // daemon is optional so we increase the current token index only if it exists
-            i++;
-        }
+        try {
+            int threadNameEnd = threadTitle.indexOf("\"", 1);
+            String threadName = threadTitle.substring(1, threadNameEnd);
+            ThreadElement thread = new ThreadElement(threadName);
+            String[] tokens = threadTitle.substring(threadNameEnd + 2).split(" ");
+            int i = 0;
+            if ("daemon".equals(tokens[i])) {
+                thread.setDaemon(true);
+                // daemon is optional so we increase the current token index only if it exists
+                i++;
+            }
 
-        thread.setPriority(Integer.parseInt(getValue(tokens[i++])));
-        thread.setThreadId(Long.decode(getValue(tokens[i++])));
-        thread.setNativeId(Integer.decode(getValue(tokens[i++])));
-        thread.setDescription(tokens[i]); // TODO: not the whole tokens
-        return thread;
+            thread.setPriority(Integer.parseInt(getValue(tokens[i++])));
+            thread.setThreadId(Long.decode(getValue(tokens[i++])));
+            thread.setNativeId(Integer.decode(getValue(tokens[i++])));
+            thread.setDescription(tokens[i]); // TODO: not the whole tokens
+            return thread;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse: " + threadTitle, e);
+        }
     }
 
     private String getValue(String token) {

@@ -24,7 +24,7 @@ public class ParserTest {
 
     @Test
     public void validFileParsing() throws URISyntaxException, IOException {
-        URL resource = getClass().getResource("/visualvm-td.txt");
+        URL resource = getClass().getResource("/visualvm-oracle-jdk-1.7.0_21.tdump");
         Path resourcePath = Paths.get(resource.toURI());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Files.copy(resourcePath, out);
