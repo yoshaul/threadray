@@ -35,7 +35,7 @@ public class MainFrame extends JFrame {
     }
 
     private void setup() {
-        config = ThreadRayConfig.loadConfig();
+        config = ThreadRayConfig.getConfig();
 
         windowListener = new AppWindowAdapter();
         addWindowListener(windowListener);

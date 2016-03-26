@@ -90,12 +90,12 @@ public class Parser {
             }
 
             // prio is optional in java 8
-            if ("prio".equals(tokens[i])) {
+            if ("prio".equals(getKey(tokens[i]))) {
                 thread.setPriority(Integer.parseInt(getValue(tokens[i++])));
             }
 
             // check for java 8 os_prio
-            if ("os_prio".equals(tokens[i])) {
+            if ("os_prio".equals(getKey(tokens[i]))) {
                 thread.setOsPriority(Integer.parseInt(getValue(tokens[i++])));
             }
 
@@ -106,6 +106,11 @@ public class Parser {
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse: " + threadTitle, e);
         }
+    }
+
+    private String getKey(String token) {
+        // get the key from a token in the format of key=value
+        return token.substring(0, token.indexOf('='));
     }
 
     private String getValue(String token) {

@@ -32,8 +32,8 @@ public class Config {
         if (!configFile.getParentFile().exists()) {
             configFile.getParentFile().mkdirs();
         }
-        try {
-            props.store(new FileOutputStream(configFile), "Updated " + new Date().toString());
+        try (FileOutputStream out = new FileOutputStream(configFile)) {
+            props.store(out, "Updated " + new Date().toString());
         } catch (Exception e) {
             //log.error("Failed to store config file", e);
         }

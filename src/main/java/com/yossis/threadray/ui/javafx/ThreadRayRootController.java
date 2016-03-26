@@ -23,7 +23,7 @@ public class ThreadRayRootController {
 
     @FXML
     private void initialize() {
-        config = ThreadRayConfig.loadConfig();
+        config = ThreadRayConfig.getConfig();
     }
 
     /**

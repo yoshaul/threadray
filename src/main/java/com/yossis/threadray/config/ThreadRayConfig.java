@@ -10,17 +10,21 @@ import java.io.IOException;
  * @author Yossi Shaul
  */
 public class ThreadRayConfig extends Config {
-    public ThreadRayConfig(File configFile) {
+    private static ThreadRayConfig config;
+
+    private ThreadRayConfig(File configFile) {
         super(configFile);
     }
 
-    public static ThreadRayConfig loadConfig() {
-        File file = new File(new File(System.getProperty("user.home"), ".threadray"), "threadray.conf");
-        ThreadRayConfig config = new ThreadRayConfig(file);
-        try {
-            config.load();
-        } catch (IOException e) {
-            // TODO: log
+    public static ThreadRayConfig getConfig() {
+        if (config == null) {
+            File file = new File(new File(System.getProperty("user.home"), ".threadray"), "threadray.conf");
+            config = new ThreadRayConfig(file);
+            try {
+                config.load();
+            } catch (IOException e) {
+                // TODO: log
+            }
         }
         return config;
     }

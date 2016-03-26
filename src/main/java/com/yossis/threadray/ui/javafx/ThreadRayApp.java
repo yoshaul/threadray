@@ -41,7 +41,7 @@ public class ThreadRayApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        config = ThreadRayConfig.loadConfig();
+        config = ThreadRayConfig.getConfig();
 
         stage.setTitle("ThreadRay");
         stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_016.png")));
@@ -52,7 +52,7 @@ public class ThreadRayApp extends Application {
         loadThreadsMainLayout();
         loadLastLocation();
 
-        loadThreadDump(null);
+        // loadThreadDump(null);
 
         Scene scene = new Scene(rootLayout);
         stage.setScene(scene);
