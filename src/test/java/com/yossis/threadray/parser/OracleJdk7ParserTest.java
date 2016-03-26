@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  *
  * @author Yossi Shaul
  */
-public class ParserTest {
+public class OracleJdk7ParserTest {
 
     @Test
     public void validFileParsing() throws URISyntaxException, IOException {

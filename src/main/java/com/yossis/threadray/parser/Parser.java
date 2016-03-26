@@ -61,6 +61,14 @@ public class Parser {
         thread.setThreadDump(sb.toString());
     }
 
+    /**
+     * Parses thread title. Structure of thread title:
+     * Java 7: "thread name" [daemon] prio={} tid={} nid={} description
+     * Java 7: "thread name" [#thread_number] [daemon] [prio={}] os_prio={} tid={} nid={} description
+     *
+     * @param threadTitle The thread title
+     * @return Thread element with the parsed data
+     */
     private ThreadElement parseThreadTitle(String threadTitle) {
         try {
             int threadNameEnd = threadTitle.indexOf("\"", 1);
@@ -68,13 +76,29 @@ public class Parser {
             ThreadElement thread = new ThreadElement(threadName);
             String[] tokens = threadTitle.substring(threadNameEnd + 2).split(" ");
             int i = 0;
+
+            // java 8 thread number
+            if (tokens[i].startsWith("#")) {
+                thread.setNumber(Integer.parseInt(tokens[i++].substring(1)));
+            }
+
+            // optional daemon
             if ("daemon".equals(tokens[i])) {
                 thread.setDaemon(true);
                 // daemon is optional so we increase the current token index only if it exists
                 i++;
             }
 
-            thread.setPriority(Integer.parseInt(getValue(tokens[i++])));
+            // prio is optional in java 8
+            if ("prio".equals(tokens[i])) {
+                thread.setPriority(Integer.parseInt(getValue(tokens[i++])));
+            }
+
+            // check for java 8 os_prio
+            if ("os_prio".equals(tokens[i])) {
+                thread.setOsPriority(Integer.parseInt(getValue(tokens[i++])));
+            }
+
             thread.setThreadId(Long.decode(getValue(tokens[i++])));
             thread.setNativeId(Integer.decode(getValue(tokens[i++])));
             thread.setDescription(tokens[i]); // TODO: not the whole tokens

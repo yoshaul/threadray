@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class ThreadElement {
     private final String name;
+    private int number;
     private int priority;
     private long threadId;
     private int nativeId;
@@ -33,6 +34,7 @@ public class ThreadElement {
      * The plain text from the stack dump representing the current thread
      */
     private String threadDump;
+    private int osPriority;
 
     public ThreadElement(String name) {
         this.name = name;
@@ -40,6 +42,14 @@ public class ThreadElement {
 
     public String getName() {
         return name;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public int getPriority() {
@@ -107,5 +117,13 @@ public class ThreadElement {
 
     public String getThreadDump() {
         return threadDump;
+    }
+
+    public int getOsPriority() {
+        return osPriority;
+    }
+
+    public void setOsPriority(int osPriority) {
+        this.osPriority = osPriority;
     }
 }
