@@ -39,6 +39,7 @@ public class OracleJdk7ParserTest {
         assertEquals(6, t.getPriority());
         assertEquals(0x000000000dab8800, t.getThreadId());
         assertEquals(0x25f4, t.getNativeId());
+        assertEquals("WAITING (parking)", t.getState());
         //assertEquals("waiting on condition", t.getDescription());
         assertNotNull(t.getStackElements());
         assertTrue(t.getStackElements().size() > 0);
@@ -56,6 +57,7 @@ public class OracleJdk7ParserTest {
         assertEquals(10, t.getPriority());
         assertEquals(0x0000000008aed800, t.getThreadId());
         assertEquals(0x13a0, t.getNativeId());
+        assertEquals("RUNNABLE", t.getState());
         //assertEquals("waiting on condition", t.getDescription());
         assertNull(t.getStackElements());
         String threadText = "\"C2 CompilerThread1\" daemon prio=10 tid=0x0000000008aed800 nid=0x13a0 waiting on condition [0x0000000000000000]\n" +

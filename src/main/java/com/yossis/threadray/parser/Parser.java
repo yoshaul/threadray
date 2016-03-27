@@ -125,7 +125,13 @@ public class Parser {
     }
 
     private void parseState(ThreadElement thread, String stateLine) {
-        thread.setState(stateLine);
+        String statePrefix = "java.lang.Thread.State: ";
+        if (stateLine.trim().length() > statePrefix.length()) {
+            thread.setState(stateLine.trim().substring(statePrefix.length()).trim());
+        } else {
+            // unknown state line
+            thread.setState(stateLine);
+        }
     }
 
     private void parseStackElements(ThreadElement thread, BufferedReader reader, StringBuilder sb) throws IOException {
