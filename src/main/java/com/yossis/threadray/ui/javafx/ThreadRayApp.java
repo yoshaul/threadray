@@ -1,7 +1,7 @@
 package com.yossis.threadray.ui.javafx;
 
 import com.yossis.threadray.config.ThreadRayConfig;
-import com.yossis.threadray.model.ThreadElement;
+import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.parser.Parser;
 import com.yossis.threadray.util.Resources;
 import javafx.application.Application;
@@ -14,13 +14,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Main application window.
@@ -52,8 +48,6 @@ public class ThreadRayApp extends Application {
         loadThreadsMainLayout();
         loadLastLocation();
 
-        // loadThreadDump(null);
-
         Scene scene = new Scene(rootLayout);
         stage.setScene(scene);
         stage.show();
@@ -83,16 +77,11 @@ public class ThreadRayApp extends Application {
 
     public void loadThreadDump(Path path) {
         try {
-            if (path == null) {
-                path = Paths.get("C:\\Dev\\Work\\Josh\\threadray\\src\\test\\resources\\visualvm-td.txt");
-            }
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Files.copy(path, out);
-            List<ThreadElement> threads = new Parser(out.toString()).parse().getThreads();
+            ThreadDump dump = new Parser(path).parse();
 
             stage.setTitle("ThreadRay - " + path.getFileName());
 
-            threadsController.update(threads);
+            threadsController.update(dump.getThreads());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

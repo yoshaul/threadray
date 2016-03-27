@@ -1,10 +1,14 @@
 package com.yossis.threadray.parser;
 
+import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,13 @@ public class Parser {
     private final String content;
     private List<ThreadElement> threads = new ArrayList<>();
 
+    public Parser(Path filePath) throws IOException {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Files.copy(filePath, out);
+            content = out.toString("UTF-8");
+        }
+    }
+
     public Parser(String content) {
         this.content = content;
     }
@@ -26,7 +37,7 @@ public class Parser {
         return threads;
     }
 
-    public Parser parse() throws IOException {
+    public ThreadDump parse() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(content));
         String line;
         while ((line = reader.readLine()) != null) {
@@ -35,12 +46,7 @@ public class Parser {
                 parseThread(line, reader);
             }
         }
-
-        /*System.out.println("Found " + threads.size() + " threads:");
-        for (ThreadElement thread : threads) {
-            System.out.println(thread.getName());
-        }*/
-        return this;
+        return new ThreadDump(threads);
     }
 
     private void parseThread(String threadTitle, BufferedReader reader) throws IOException {
