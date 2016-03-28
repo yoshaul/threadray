@@ -56,7 +56,7 @@ public class ThreadRayRootController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("ThreadRay");
         alert.setHeaderText("About");
-        alert.setContentText("Copyright 2014-2015 Yossi Shaul");
+        alert.setContentText("Copyright 2014-2016 Yossi Shaul");
         alert.showAndWait();
     }
 }

@@ -61,7 +61,7 @@ public class ThreadRayApp extends Application {
     }
 
     public void loadThreadsMainLayout() throws IOException {
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayThreadsLayout2.fxml");
+        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayThreadsLayout.fxml");
         AnchorPane personOverview = loader.load();
         rootLayout.setCenter(personOverview);
         threadsController = loader.getController();
