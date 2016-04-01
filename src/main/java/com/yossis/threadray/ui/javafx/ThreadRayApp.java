@@ -3,8 +3,11 @@ package com.yossis.threadray.ui.javafx;
 import com.yossis.threadray.config.ThreadRayConfig;
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.parser.Parser;
+import com.yossis.threadray.ui.javafx.view.RootLayout;
+import com.yossis.threadray.ui.javafx.view.ThreadsPane;
 import com.yossis.threadray.util.Resources;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -28,7 +31,7 @@ public class ThreadRayApp extends Application {
     private ThreadRayConfig config;
     private Stage stage;
     private BorderPane rootLayout;
-    private ThreadRayThreadsController threadsController;
+    private ThreadsPane.ThreadRayThreadsController threadsController;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,13 +47,23 @@ public class ThreadRayApp extends Application {
         stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_032.png")));
         stage.setOnCloseRequest(e -> closeApp());
 
-        loadRootLayout();
-        loadThreadsMainLayout();
+        loadRootLayout2();
+        loadThreadsMainLayout2();
         loadLastLocation();
+
+        loadThreadDump(config.getLastOpenFile().toPath());
 
         Scene scene = new Scene(rootLayout);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void loadRootLayout2() throws IOException {
+        // FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayRootLayout.fxml");
+        ThreadRayRootController controller = new ThreadRayRootController();
+        controller.setApp(this);
+        controller.initialize();
+        rootLayout = new RootLayout(controller);
     }
 
     private void loadRootLayout() throws IOException {
@@ -58,6 +71,13 @@ public class ThreadRayApp extends Application {
         rootLayout = loader.load();
         ThreadRayRootController controller = loader.getController();
         controller.setApp(this);
+    }
+
+    public void loadThreadsMainLayout2() throws IOException {
+        ThreadsPane threadsPane = new ThreadsPane();
+        rootLayout.setCenter(threadsPane);
+        threadsController = threadsPane.getController();
+        threadsController.setApp(this);
     }
 
     public void loadThreadsMainLayout() throws IOException {
@@ -76,6 +96,9 @@ public class ThreadRayApp extends Application {
     }
 
     public void loadThreadDump(Path path) {
+        if (path == null || !path.toFile().isFile()) {
+            return;
+        }
         try {
             ThreadDump dump = new Parser(path).parse();
 
@@ -107,8 +130,9 @@ public class ThreadRayApp extends Application {
     }
 
     public void closeApp() {
+        //TODO: move set and save to stop method
         setLastStageLocation();
         config.save();
-        System.exit(0);
+        Platform.exit();
     }
 }

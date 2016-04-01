@@ -52,12 +52,27 @@ public class ThreadRayConfig extends Config {
         return new Dimension(width, height);
     }
 
-    public File getLastOpenDirectory() {
-        String lastOpen = getProperty("gui.last.open", System.getProperty("user.dir"));
-        return new File(lastOpen);
+    /**
+     * @return The last file opened or null if not recorded.
+     */
+    public File getLastOpenFile() {
+        String lastOpen = getProperty("gui.last.open");
+        return lastOpen != null ? new File(lastOpen) : null;
     }
 
-    public void setLastOpenFolder(File parentFile) {
+    /**
+     * @return The directory that contains the last opened file. User dir if not recorded.
+     */
+    public File getLastOpenDirectory() {
+        File lastOpenFile = getLastOpenFile();
+        if (lastOpenFile != null) {
+            return lastOpenFile.getParentFile();
+        } else {
+            return new File(System.getProperty("user.dir"));
+        }
+    }
+
+    public void setLastOpenFile(File parentFile) {
         setProperty("gui.last.open", parentFile.getAbsolutePath());
     }
 }
