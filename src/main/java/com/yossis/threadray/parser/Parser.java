@@ -127,7 +127,20 @@ public class Parser {
     private void parseState(ThreadElement thread, String stateLine) {
         String statePrefix = "java.lang.Thread.State: ";
         if (stateLine.trim().length() > statePrefix.length()) {
-            thread.setState(stateLine.trim().substring(statePrefix.length()).trim());
+            String stateAndDescription = stateLine.trim().substring(statePrefix.length()).trim();
+            Thread.State state;
+            String description = "";
+            // extract Thread.STATE and optional extra details inside brackets. e.g., WAITING (parking)
+            int descriptionIdx = stateAndDescription.indexOf('(');
+            if (descriptionIdx > -1) {
+                state = Thread.State.valueOf(stateAndDescription.substring(0, descriptionIdx - 1));
+                // extract description from within brackets
+                description = stateAndDescription.substring(descriptionIdx + 1, stateAndDescription.length() - 1);
+            } else {
+                state = Thread.State.valueOf(stateAndDescription);
+            }
+            thread.setState(stateAndDescription);
+            thread.setThreadState(new ThreadElement.State(state, description));
         } else {
             // unknown state line
             thread.setState(stateLine);

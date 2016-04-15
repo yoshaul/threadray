@@ -1,0 +1,32 @@
+/* thread state table column icons */
+.state-new {
+    -fx-graphic: url("/ui/icons/external/add.png");
+}
+
+.state-running {
+    -fx-graphic: url("/ui/icons/external/play.png");
+}
+
+.state-blocked {
+    -fx-graphic: url("/ui/icons/external/cancel.png");
+}
+
+.state-waiting {
+    -fx-graphic: url("/ui/icons/external/timed.png");
+}
+
+.state-timed-waiting {
+    -fx-graphic: url("/ui/icons/external/timed-wait.png");
+}
+
+.state-terminated {
+    -fx-graphic: url("/ui/icons/external/stop.png");
+}
+
+.state-unknown {
+    -fx-graphic: url("/ui/icons/external/help.png");
+}
+
+.table-column {
+    -fx-alignment: CENTER-LEFT;
+}

@@ -28,7 +28,11 @@ public class ThreadElement {
     private int nativeId;
     private String description;
     private boolean daemon;
+    /**
+     * The thread state. See {@link Thread.State}
+     */
     private String state;
+    private State threadState;
     private List<StackElement> stackElements;
     /**
      * The plain text from the stack dump representing the current thread
@@ -126,4 +130,31 @@ public class ThreadElement {
     public void setOsPriority(int osPriority) {
         this.osPriority = osPriority;
     }
+
+    public State getThreadState() {
+        return threadState;
+    }
+
+    public void setThreadState(State threadState) {
+        this.threadState = threadState;
+    }
+
+    public static class State {
+        private final Thread.State state;
+        private final String description;
+
+        public State(Thread.State state, String description) {
+            this.state = state;
+            this.description = description;
+        }
+
+        public Thread.State getState() {
+            return state;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
 }

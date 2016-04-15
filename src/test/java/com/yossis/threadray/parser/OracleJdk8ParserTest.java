@@ -47,6 +47,8 @@ public class OracleJdk8ParserTest {
         assertEquals(0x000000001f252000, t.getThreadId());
         assertEquals(0x163c, t.getNativeId());
         assertEquals("WAITING (on object monitor)", t.getState());
+        assertEquals(Thread.State.WAITING, t.getThreadState().getState());
+        assertEquals("on object monitor", t.getThreadState().getDescription());
         //assertEquals(" in Object.wait() [0x0000000026a4f000]", t.getDescription());
         assertNotNull(t.getStackElements());
         assertEquals(t.getStackElements().size(), 5);
@@ -67,6 +69,7 @@ public class OracleJdk8ParserTest {
         assertEquals(0x00000000022e7800, t.getThreadId());
         assertEquals(0x1580, t.getNativeId());
         assertNull(t.getState());
+        assertNull(t.getThreadState());
         assertEquals("runnable", t.getDescription());
         assertNull(t.getStackElements());
         // assertEquals(t.getStackElements().size(), 0);

@@ -23,8 +23,8 @@ import java.util.List;
 public class ThreadsPane extends AnchorPane {
     private final ThreadRayThreadsController controller;
     private TableView<ThreadElementFx> threadsTable;
+    private TableColumn<ThreadElementFx, ThreadElement.State> threadStateColumn;
     private TableColumn<ThreadElementFx, String> threadNameColumn;
-    private TableColumn<ThreadElementFx, String> threadStateColumn;
     private Label threadsCountLabel;
     private TextArea threadDumpTextArea;
 
@@ -37,10 +37,16 @@ public class ThreadsPane extends AnchorPane {
         AnchorPane threadsList = new AnchorPane();
         threadsTable = new TableView<>();
 
-        threadNameColumn = new TableColumn<>("Name");
         threadStateColumn = new TableColumn<>("State");
+        threadStateColumn.setPrefWidth(25);
+        threadNameColumn = new TableColumn<>("Name");
+        threadNameColumn.setPrefWidth(75);
 
         threadsTable.getColumns().addAll(threadStateColumn, threadNameColumn);
+
+        // threadsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        threadStateColumn.prefWidthProperty().bind(threadsTable.widthProperty().multiply(0.25));
+        threadNameColumn.prefWidthProperty().bind(threadsTable.widthProperty().multiply(0.75));
 
         threadsList.getChildren().addAll(threadsTable);
         AnchorPane.setTopAnchor(threadsTable, 0.0);
@@ -114,8 +120,9 @@ public class ThreadsPane extends AnchorPane {
 
         @FXML
         private void initialize() {
-            threadNameColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadName());
             threadStateColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadState());
+            threadStateColumn.setCellFactory(param -> new ThreadStateCell());
+            threadNameColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadName());
 
             threadsTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showThreadDetails(newValue));
@@ -156,6 +163,44 @@ public class ThreadsPane extends AnchorPane {
          */
         public int countMatches(String text) {
             return dump.countMatches(text);
+        }
+    }
+
+    private static class ThreadStateCell extends TableCell<ThreadElementFx, ThreadElement.State> {
+        Label stateLabel = new Label();
+
+        public ThreadStateCell() {
+            setGraphic(stateLabel);
+        }
+
+        @Override
+        protected void updateItem(ThreadElement.State item, boolean empty) {
+            if (item != null) {
+                stateLabel.setText(item.getState().toString());
+                stateLabel.getStyleClass().setAll(getCssStyle(item.getState().name()));
+            } else {
+                stateLabel.setText("");
+                stateLabel.getStyleClass().setAll("state-unknown");
+            }
+        }
+
+        private String getCssStyle(String state) {
+            switch (state) {
+                case "NEW":
+                    return "state-new";
+                case "RUNNABLE":
+                    return "state-running";
+                case "BLOCKED":
+                    return "state-blocked";
+                case "WAITING":
+                    return "state-waiting";
+                case "TIMED_WAITING":
+                    return "state-timed-waiting";
+                case "TERMINATED":
+                    return "state-terminated";
+                default:
+                    return "state-unknown";
+            }
         }
     }
 }

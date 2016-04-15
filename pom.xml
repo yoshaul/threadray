@@ -61,7 +61,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>com.yossis.threadray.ui.swing.ThreadRay</Main-Class>
+                            <Main-Class>com.yossis.threadray.ui.javafx.ThreadRayApp</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>

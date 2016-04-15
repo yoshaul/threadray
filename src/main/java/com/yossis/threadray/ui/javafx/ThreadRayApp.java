@@ -51,6 +51,7 @@ public class ThreadRayApp extends Application {
         loadThreadDump(config.getLastOpenFile().toPath());
 
         Scene scene = new Scene(rootLayout);
+        scene.getStylesheets().add(this.getClass().getResource("/ui/themes/DefaultTheme.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }
