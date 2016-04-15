@@ -2,6 +2,8 @@ package com.yossis.threadray.parser;
 
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Parses a thread dump.
@@ -18,6 +21,7 @@ import java.util.List;
  * @author Yossi Shaul
  */
 public class Parser {
+    private static final Logger log = LoggerFactory.getLogger(Parser.class);
 
     private final String content;
     private List<ThreadElement> threads = new ArrayList<>();
@@ -33,11 +37,8 @@ public class Parser {
         this.content = content;
     }
 
-    public List<ThreadElement> getThreads() {
-        return threads;
-    }
-
     public ThreadDump parse() throws IOException {
+        long start = System.nanoTime();
         BufferedReader reader = new BufferedReader(new StringReader(content));
         String line;
         while ((line = reader.readLine()) != null) {
@@ -46,6 +47,8 @@ public class Parser {
                 parseThread(line, reader);
             }
         }
+        long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        log.info("Finished parsing {} threads in {} ms", threads.size(), duration);
         return new ThreadDump(content, threads);
     }
 
