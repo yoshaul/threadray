@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  *
  * @author Yossi Shaul
  */
+@Deprecated
 public class ThreadRayThreadsController {
     private ObservableList<ThreadElementFx> threadsFx = FXCollections.observableArrayList();
 

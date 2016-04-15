@@ -1,5 +1,6 @@
 package com.yossis.threadray.ui.javafx.view;
 
+import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.ui.javafx.ThreadRayApp;
 import com.yossis.threadray.ui.javafx.model.ThreadElementFx;
@@ -7,12 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Pane containing thread dump info.
@@ -63,6 +64,7 @@ public class ThreadsPane extends AnchorPane {
         summaryPane.getChildren().add(gridPane);
 
         threadDumpTextArea = new TextArea();
+        threadDumpTextArea.setEditable(false);
         summaryPane.getChildren().add(threadDumpTextArea);
 
         threadDumpTextArea.setLayoutX(14);
@@ -71,6 +73,8 @@ public class ThreadsPane extends AnchorPane {
         AnchorPane.setBottomAnchor(threadDumpTextArea, 10.0);
         AnchorPane.setLeftAnchor(threadDumpTextArea, leftRightInsets);
         AnchorPane.setRightAnchor(threadDumpTextArea, leftRightInsets);
+
+        threadDumpTextArea.setContextMenu(createTextAreaContextMenu());
 
         SplitPane splitPane = new SplitPane(threadsList, summaryPane);
         splitPane.setPrefSize(600, 400);
@@ -85,12 +89,27 @@ public class ThreadsPane extends AnchorPane {
         controller.initialize();
     }
 
+    private ContextMenu createTextAreaContextMenu() {
+        MenuItem copy = new MenuItem("_Copy");
+        copy.setAccelerator(KeyCombination.keyCombination("shortcut+C"));
+        copy.setOnAction(e -> threadDumpTextArea.copy());
+
+        MenuItem count = new MenuItem("Count");
+        copy.setOnAction(e -> {
+            String selectedText = threadDumpTextArea.getSelectedText();
+            getController().countMatches(selectedText);
+        });
+
+        return new ContextMenu(copy, new SeparatorMenuItem(), count);
+    }
+
     public ThreadRayThreadsController getController() {
         return controller;
     }
 
-
     public class ThreadRayThreadsController {
+        // current active thread dump
+        private ThreadDump dump;
         private ObservableList<ThreadElementFx> threadsFx = FXCollections.observableArrayList();
 
         @FXML
@@ -106,12 +125,14 @@ public class ThreadsPane extends AnchorPane {
             threadsTable.setItems(threadsFx);
         }
 
-        public void update(List<ThreadElement> threads) {
+        public void update(ThreadDump dump) {
+            this.dump = dump;
+            List<ThreadElement> threads = dump.getThreads();
             threadsCountLabel.setText(threads.size() + "");
             threadsFx.remove(0, threadsFx.size());
             threads.stream().forEach(t -> threadsFx.add(new ThreadElementFx(t)));
-            String threadDump = threads.stream().map(ThreadElement::getThreadDump).collect(Collectors.joining("\n"));
-            threadDumpTextArea.setText(threadDump);
+            //String threadDump = threads.stream().map(ThreadElement::getThreadDump).collect(Collectors.joining("\n"));
+            threadDumpTextArea.setText(dump.getText());
         }
 
         private void showThreadDetails(ThreadElementFx thread) {
@@ -127,5 +148,14 @@ public class ThreadsPane extends AnchorPane {
         */
         }
 
+        /**
+         * Counts the occurrences of the input text in the thread dump
+         *
+         * @param text The text to search for
+         * @return Count of this text in the thread dump
+         */
+        public int countMatches(String text) {
+            return dump.countMatches(text);
+        }
     }
 }

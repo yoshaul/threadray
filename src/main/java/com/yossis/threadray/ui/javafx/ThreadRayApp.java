@@ -8,17 +8,14 @@ import com.yossis.threadray.ui.javafx.view.ThreadsPane;
 import com.yossis.threadray.util.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -47,8 +44,8 @@ public class ThreadRayApp extends Application {
         stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_032.png")));
         stage.setOnCloseRequest(e -> closeApp());
 
-        loadRootLayout2();
-        loadThreadsMainLayout2();
+        createRootLayout();
+        createThreadsMainLayout();
         loadLastLocation();
 
         loadThreadDump(config.getLastOpenFile().toPath());
@@ -58,41 +55,18 @@ public class ThreadRayApp extends Application {
         stage.show();
     }
 
-    private void loadRootLayout2() throws IOException {
-        // FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayRootLayout.fxml");
+    private void createRootLayout() throws IOException {
         ThreadRayRootController controller = new ThreadRayRootController();
         controller.setApp(this);
         controller.initialize();
         rootLayout = new RootLayout(controller);
     }
 
-    private void loadRootLayout() throws IOException {
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayRootLayout.fxml");
-        rootLayout = loader.load();
-        ThreadRayRootController controller = loader.getController();
-        controller.setApp(this);
-    }
-
-    public void loadThreadsMainLayout2() throws IOException {
+    public void createThreadsMainLayout() throws IOException {
         ThreadsPane threadsPane = new ThreadsPane();
         rootLayout.setCenter(threadsPane);
         threadsController = threadsPane.getController();
         threadsController.setApp(this);
-    }
-
-    public void loadThreadsMainLayout() throws IOException {
-        FXMLLoader loader = getFxmlLoader("/com/yossis/threadray/ui/javafx/view/ThreadRayThreadsLayout.fxml");
-        AnchorPane personOverview = loader.load();
-        rootLayout.setCenter(personOverview);
-        threadsController = loader.getController();
-        threadsController.setApp(this);
-    }
-
-    private FXMLLoader getFxmlLoader(String fxmlResource) {
-        FXMLLoader loader = new FXMLLoader();
-        URL resource = Resources.getUrl(fxmlResource);
-        loader.setLocation(resource);
-        return loader;
     }
 
     public void loadThreadDump(Path path) {
@@ -104,7 +78,7 @@ public class ThreadRayApp extends Application {
 
             stage.setTitle("ThreadRay - " + path.getFileName());
 
-            threadsController.update(dump.getThreads());
+            threadsController.update(dump);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -129,10 +103,13 @@ public class ThreadRayApp extends Application {
         config.setWindowSize(new Dimension((int) stage.getWidth(), (int) stage.getHeight()));
     }
 
-    public void closeApp() {
-        //TODO: move set and save to stop method
+    @Override
+    public void stop() throws Exception {
         setLastStageLocation();
         config.save();
+    }
+
+    public void closeApp() {
         Platform.exit();
     }
 }

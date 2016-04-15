@@ -46,7 +46,7 @@ public class Parser {
                 parseThread(line, reader);
             }
         }
-        return new ThreadDump(threads);
+        return new ThreadDump(content, threads);
     }
 
     private void parseThread(String threadTitle, BufferedReader reader) throws IOException {
