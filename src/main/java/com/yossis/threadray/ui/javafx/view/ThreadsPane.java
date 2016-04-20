@@ -12,6 +12,8 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -28,13 +30,20 @@ public class ThreadsPane extends AnchorPane {
     private Label threadsCountLabel;
     private TextArea threadDumpTextArea;
 
-    public ThreadsPane() {
+    public ThreadsPane(Stage mainStage) {
 
         double leftRightInsets = 14.0;
 
         setPrefSize(800, 800);
 
-        AnchorPane threadsList = new AnchorPane();
+        Button showAllBtn = new Button("Show all");
+        showAllBtn.setOnAction(e -> threadsTable.getSelectionModel().clearSelection());
+
+        Button filterBtn = new Button("Filter...");
+        filterBtn.setOnAction(e -> new FiltersStage(mainStage));
+
+        HBox tableToolbar = new HBox(5, showAllBtn, filterBtn);
+
         threadsTable = new TableView<>();
 
         threadStateColumn = new TableColumn<>("State");
@@ -48,8 +57,7 @@ public class ThreadsPane extends AnchorPane {
         threadStateColumn.prefWidthProperty().bind(threadsTable.widthProperty().multiply(0.25));
         threadNameColumn.prefWidthProperty().bind(threadsTable.widthProperty().multiply(0.75));
 
-        threadsList.getChildren().addAll(threadsTable);
-        AnchorPane.setTopAnchor(threadsTable, 0.0);
+        AnchorPane.setTopAnchor(threadsTable, 25.0);
         AnchorPane.setBottomAnchor(threadsTable, 0.0);
         AnchorPane.setLeftAnchor(threadsTable, 0.0);
         AnchorPane.setRightAnchor(threadsTable, 0.0);
@@ -81,6 +89,9 @@ public class ThreadsPane extends AnchorPane {
         AnchorPane.setRightAnchor(threadDumpTextArea, leftRightInsets);
 
         threadDumpTextArea.setContextMenu(createTextAreaContextMenu());
+
+        AnchorPane threadsList = new AnchorPane();
+        threadsList.getChildren().addAll(tableToolbar, threadsTable);
 
         SplitPane splitPane = new SplitPane(threadsList, summaryPane);
         splitPane.setPrefSize(600, 400);
@@ -138,21 +149,11 @@ public class ThreadsPane extends AnchorPane {
             threadsCountLabel.setText(threads.size() + "");
             threadsFx.remove(0, threadsFx.size());
             threads.stream().forEach(t -> threadsFx.add(new ThreadElementFx(t)));
-            //String threadDump = threads.stream().map(ThreadElement::getThreadDump).collect(Collectors.joining("\n"));
             threadDumpTextArea.setText(dump.getText());
         }
 
         private void showThreadDetails(ThreadElementFx thread) {
-            //threadNameLabel.setText(thread != null ? thread.getThreadName().get() : "");
-            //threadIdLabel.setText(thread != null ? thread.getThreadId() + "" : "");
-            threadDumpTextArea.setText(thread != null ? thread.getThreadDump() : "");
-        /*
-        Text t = (Text) threadDumpTextArea.lookup(".text");
-        System.out.println("LayoutX " + t.getLayoutX());
-        System.out.println("LayoutY " + t.getLayoutY());
-        System.out.println("Width: " + t.getBoundsInLocal().getWidth());
-        System.out.println("Height: " + t.getBoundsInLocal().getHeight());
-        */
+            threadDumpTextArea.setText(thread != null ? thread.getThreadDump() : dump.getText());
         }
 
         /**

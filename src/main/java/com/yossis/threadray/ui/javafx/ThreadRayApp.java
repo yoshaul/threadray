@@ -3,13 +3,12 @@ package com.yossis.threadray.ui.javafx;
 import com.yossis.threadray.config.ThreadRayConfig;
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.parser.Parser;
+import com.yossis.threadray.ui.javafx.util.UI;
 import com.yossis.threadray.ui.javafx.view.RootLayout;
 import com.yossis.threadray.ui.javafx.view.ThreadsPane;
-import com.yossis.threadray.util.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -40,8 +39,7 @@ public class ThreadRayApp extends Application {
         config = ThreadRayConfig.getConfig();
 
         stage.setTitle("ThreadRay");
-        stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_016.png")));
-        stage.getIcons().add(new Image(Resources.getStream("/ui/icons/icon_032.png")));
+        UI.setAppIcon(stage);
         stage.setOnCloseRequest(e -> closeApp());
 
         createRootLayout();
@@ -64,7 +62,7 @@ public class ThreadRayApp extends Application {
     }
 
     public void createThreadsMainLayout() throws IOException {
-        ThreadsPane threadsPane = new ThreadsPane();
+        ThreadsPane threadsPane = new ThreadsPane(stage);
         rootLayout.setCenter(threadsPane);
         threadsController = threadsPane.getController();
         threadsController.setApp(this);
