@@ -1,4 +1,4 @@
-package com.yossis.threadray.ui.javafx.view;
+package com.yossis.threadray.ui.javafx.view.filter;
 
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.beans.property.SimpleStringProperty;
@@ -6,10 +6,13 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -27,6 +30,10 @@ public class FiltersStage extends Stage {
         initOwner(mainStage);
         UI.setAppIcon(this);
 
+        Button addBtn = new Button("Add...");
+        addBtn.setOnAction(e -> new FilterCrudStage(this));
+        HBox toolbar = new HBox(10, addBtn);
+
         TableColumn nameCol = new TableColumn<>("Name");
         nameCol.setPrefWidth(25);
         TableColumn valueCol = new TableColumn<>("Value");
@@ -37,7 +44,8 @@ public class FiltersStage extends Stage {
         nameCol.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
         valueCol.prefWidthProperty().bind(table.widthProperty().multiply(0.75));
 
-        Scene scene = new Scene(table, 400, 400);
+        VBox root = new VBox(toolbar, table);
+        Scene scene = new Scene(root, 400, 400);
         // close stage on escape
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {if (e.getCode() == KeyCode.ESCAPE) this.close();});
         setScene(scene);

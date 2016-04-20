@@ -4,6 +4,7 @@ import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.ui.javafx.ThreadRayApp;
 import com.yossis.threadray.ui.javafx.model.ThreadElementFx;
+import com.yossis.threadray.ui.javafx.view.filter.FiltersStage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
