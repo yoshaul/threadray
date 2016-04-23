@@ -1,8 +1,8 @@
 package com.yossis.threadray.ui.javafx.view.filter;
 
+import com.yossis.threadray.model.filter.ThreadFilter;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -23,18 +23,19 @@ import javafx.stage.Stage;
  */
 public class FiltersStage extends Stage {
 
-    private final TableView<StringProperty> table;
+    private final TableView<ThreadFilter> table;
 
-    public FiltersStage(Stage mainStage) {
+    public FiltersStage(Stage mainStage, ThreadFiltersPredicate filteredThreads) {
         initModality(Modality.APPLICATION_MODAL);
         initOwner(mainStage);
         UI.setAppIcon(this);
 
+        ObservableList<ThreadFilter> filtersFx = FXCollections.observableArrayList();
         Button addBtn = new Button("Add...");
-        addBtn.setOnAction(e -> new FilterCrudStage(this));
+        addBtn.setOnAction(e -> new FilterCrudStage(this, filtersFx));
         HBox toolbar = new HBox(10, addBtn);
 
-        TableColumn nameCol = new TableColumn<>("Name");
+        TableColumn nameCol = new TableColumn<>("Type");
         nameCol.setPrefWidth(25);
         TableColumn valueCol = new TableColumn<>("Value");
         valueCol.setPrefWidth(75);
@@ -50,22 +51,24 @@ public class FiltersStage extends Stage {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {if (e.getCode() == KeyCode.ESCAPE) this.close();});
         setScene(scene);
 
-        ObservableList<StringProperty> filtersFx = FXCollections.observableArrayList();
-        filtersFx.addAll(new SimpleStringProperty("Test"));
-        Controller controller = new Controller(filtersFx, nameCol, valueCol);
+        Controller controller = new Controller(filtersFx, filteredThreads, nameCol, valueCol);
 
         show();
     }
 
     private class Controller {
-        private ObservableList<StringProperty> filtersFx;
+        private ObservableList<ThreadFilter> filtersFx;
 
-        public Controller(ObservableList<StringProperty> filtersFx, TableColumn<StringProperty, String> nameCol,
-                TableColumn<StringProperty, String> valueCol) {
+        public Controller(ObservableList<ThreadFilter> filtersFx, ThreadFiltersPredicate filterPredicate,
+                TableColumn<ThreadFilter, String> typeCol,
+                TableColumn<ThreadFilter, String> valueCol) {
             this.filtersFx = filtersFx;
+            if (filterPredicate.getFilters() != null) {
+                filtersFx.addAll(filterPredicate.getFilters());
+            }
             table.setItems(filtersFx);
-            nameCol.setCellValueFactory(cellData -> cellData.getValue());
-            valueCol.setCellValueFactory(cellData -> cellData.getValue());
+            typeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getType()));
+            valueCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
         }
     }
 }

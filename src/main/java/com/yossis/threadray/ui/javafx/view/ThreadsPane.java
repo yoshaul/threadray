@@ -5,8 +5,10 @@ import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.ui.javafx.ThreadRayApp;
 import com.yossis.threadray.ui.javafx.model.ThreadElementFx;
 import com.yossis.threadray.ui.javafx.view.filter.FiltersStage;
+import com.yossis.threadray.ui.javafx.view.filter.ThreadFiltersPredicate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
@@ -32,6 +34,7 @@ public class ThreadsPane extends AnchorPane {
     private TextArea threadDumpTextArea;
 
     public ThreadsPane(Stage mainStage) {
+        controller = new ThreadRayThreadsController();
 
         double leftRightInsets = 14.0;
 
@@ -41,7 +44,7 @@ public class ThreadsPane extends AnchorPane {
         showAllBtn.setOnAction(e -> threadsTable.getSelectionModel().clearSelection());
 
         Button filterBtn = new Button("Filter...");
-        filterBtn.setOnAction(e -> new FiltersStage(mainStage));
+        filterBtn.setOnAction(e -> new FiltersStage(mainStage, controller.threadFiltersPredicate));
 
         HBox tableToolbar = new HBox(5, showAllBtn, filterBtn);
 
@@ -103,7 +106,6 @@ public class ThreadsPane extends AnchorPane {
         setLeftAnchor(splitPane, 0.0);
         setRightAnchor(splitPane, 0.0);
 
-        controller = new ThreadRayThreadsController();
         controller.initialize();
     }
 
@@ -129,6 +131,7 @@ public class ThreadsPane extends AnchorPane {
         // current active thread dump
         private ThreadDump dump;
         private ObservableList<ThreadElementFx> threadsFx = FXCollections.observableArrayList();
+        private ThreadFiltersPredicate threadFiltersPredicate;
 
         @FXML
         private void initialize() {
@@ -136,19 +139,22 @@ public class ThreadsPane extends AnchorPane {
             threadStateColumn.setCellFactory(param -> new ThreadStateCell());
             threadNameColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadName());
 
+            threadFiltersPredicate = new ThreadFiltersPredicate(null);
+            FilteredList<ThreadElementFx> filteredThreads = new FilteredList<>(threadsFx, threadFiltersPredicate);
+            threadsTable.setItems(filteredThreads);
             threadsTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showThreadDetails(newValue));
         }
 
         public void setApp(ThreadRayApp app) {
-            threadsTable.setItems(threadsFx);
+            // threadsTable.setItems(threadsFx);
         }
 
         public void update(ThreadDump dump) {
             this.dump = dump;
             List<ThreadElement> threads = dump.getThreads();
             threadsCountLabel.setText(threads.size() + "");
-            threadsFx.remove(0, threadsFx.size());
+            threadsFx.clear();
             threads.stream().forEach(t -> threadsFx.add(new ThreadElementFx(t)));
             threadDumpTextArea.setText(dump.getText());
         }
