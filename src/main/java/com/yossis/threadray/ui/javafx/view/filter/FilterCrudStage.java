@@ -4,7 +4,6 @@ import com.yossis.threadray.model.filter.PatternFilter;
 import com.yossis.threadray.model.filter.ThreadFilter;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -15,13 +14,15 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 /**
  * Stage to create or edit a filter.
  *
  * @author Yossi Shaul
  */
 public class FilterCrudStage extends Stage {
-    public FilterCrudStage(Stage parent, ObservableList<ThreadFilter> filtersFx) {
+    public FilterCrudStage(Stage parent, List<ThreadFilter> filtersFx) {
         initModality(Modality.APPLICATION_MODAL);
         initOwner(parent);
         UI.setAppIcon(this);

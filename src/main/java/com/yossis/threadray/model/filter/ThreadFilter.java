@@ -18,5 +18,5 @@ public interface ThreadFilter {
      * @param t The thread to inspect
      * @return True if the given thread should be filtered by this filter
      */
-    boolean filter(ThreadElement t);
+    boolean test(ThreadElement t);
 }

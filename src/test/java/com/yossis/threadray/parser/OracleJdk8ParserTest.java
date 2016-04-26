@@ -5,7 +5,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,9 +29,7 @@ public class OracleJdk8ParserTest {
     public void setup() throws IOException, URISyntaxException {
         URL resource = getClass().getResource("/jstack-oracle-jdk-1.8.0_60.tdump");
         resourcePath = Paths.get(resource.toURI());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Files.copy(resourcePath, out);
-        threads = new Parser(out.toString()).parse().getThreads();
+        threads = new Parser(resourcePath).parse().getThreads();
         assertEquals("Unexpected thread count", 29, threads.size());
     }
 

@@ -65,7 +65,6 @@ public class ThreadRayApp extends Application {
         ThreadsPane threadsPane = new ThreadsPane(stage);
         rootLayout.setCenter(threadsPane);
         threadsController = threadsPane.getController();
-        threadsController.setApp(this);
     }
 
     public void loadThreadDump(Path path) {

@@ -33,10 +33,6 @@ public class Parser {
         }
     }
 
-    public Parser(String content) {
-        this.content = content;
-    }
-
     public ThreadDump parse() throws IOException {
         long start = System.nanoTime();
         BufferedReader reader = new BufferedReader(new StringReader(content));

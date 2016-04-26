@@ -4,13 +4,14 @@ import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.parser.StackElement;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * A {@link ThreadFilter} that filters threads by a given pattern.
  *
  * @author Yossi Shaul
  */
-public class PatternFilter implements ThreadFilter {
+public class PatternFilter implements ThreadFilter, Predicate<ThreadElement> {
 
     private final String pattern;
 
@@ -24,7 +25,7 @@ public class PatternFilter implements ThreadFilter {
     }
 
     @Override
-    public boolean filter(ThreadElement t) {
+    public boolean test(ThreadElement t) {
         List<StackElement> elements = t.getStackElements();
         if (elements != null) {
             for (StackElement se : elements) {

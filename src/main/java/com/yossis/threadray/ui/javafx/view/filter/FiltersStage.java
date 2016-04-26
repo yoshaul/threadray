@@ -1,10 +1,9 @@
 package com.yossis.threadray.ui.javafx.view.filter;
 
 import com.yossis.threadray.model.filter.ThreadFilter;
+import com.yossis.threadray.ui.javafx.model.ObservableThreadDump;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -25,14 +24,13 @@ public class FiltersStage extends Stage {
 
     private final TableView<ThreadFilter> table;
 
-    public FiltersStage(Stage mainStage, ThreadFiltersPredicate filteredThreads) {
+    public FiltersStage(Stage mainStage, ObservableThreadDump threadDump) {
         initModality(Modality.APPLICATION_MODAL);
         initOwner(mainStage);
         UI.setAppIcon(this);
 
-        ObservableList<ThreadFilter> filtersFx = FXCollections.observableArrayList();
         Button addBtn = new Button("Add...");
-        addBtn.setOnAction(e -> new FilterCrudStage(this, filtersFx));
+        addBtn.setOnAction(e -> new FilterCrudStage(this, threadDump.getFilters()));
         HBox toolbar = new HBox(10, addBtn);
 
         TableColumn nameCol = new TableColumn<>("Type");
@@ -51,22 +49,18 @@ public class FiltersStage extends Stage {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {if (e.getCode() == KeyCode.ESCAPE) this.close();});
         setScene(scene);
 
-        Controller controller = new Controller(filtersFx, filteredThreads, nameCol, valueCol);
+        new Controller(threadDump, nameCol, valueCol);
 
         show();
     }
 
     private class Controller {
-        private ObservableList<ThreadFilter> filtersFx;
 
-        public Controller(ObservableList<ThreadFilter> filtersFx, ThreadFiltersPredicate filterPredicate,
+        Controller(ObservableThreadDump threadDump,
                 TableColumn<ThreadFilter, String> typeCol,
                 TableColumn<ThreadFilter, String> valueCol) {
-            this.filtersFx = filtersFx;
-            if (filterPredicate.getFilters() != null) {
-                filtersFx.addAll(filterPredicate.getFilters());
-            }
-            table.setItems(filtersFx);
+
+            table.setItems(threadDump.getFilters());
             typeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getType()));
             valueCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
         }

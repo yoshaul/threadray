@@ -2,13 +2,9 @@ package com.yossis.threadray.ui.javafx.view;
 
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
-import com.yossis.threadray.ui.javafx.ThreadRayApp;
+import com.yossis.threadray.ui.javafx.model.ObservableThreadDump;
 import com.yossis.threadray.ui.javafx.model.ThreadElementFx;
 import com.yossis.threadray.ui.javafx.view.filter.FiltersStage;
-import com.yossis.threadray.ui.javafx.view.filter.ThreadFiltersPredicate;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
@@ -17,8 +13,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 /**
  * Pane containing thread dump info.
@@ -44,7 +38,7 @@ public class ThreadsPane extends AnchorPane {
         showAllBtn.setOnAction(e -> threadsTable.getSelectionModel().clearSelection());
 
         Button filterBtn = new Button("Filter...");
-        filterBtn.setOnAction(e -> new FiltersStage(mainStage, controller.threadFiltersPredicate));
+        filterBtn.setOnAction(e -> new FiltersStage(mainStage, controller.threadDump));
 
         HBox tableToolbar = new HBox(5, showAllBtn, filterBtn);
 
@@ -128,10 +122,8 @@ public class ThreadsPane extends AnchorPane {
     }
 
     public class ThreadRayThreadsController {
-        // current active thread dump
-        private ThreadDump dump;
-        private ObservableList<ThreadElementFx> threadsFx = FXCollections.observableArrayList();
-        private ThreadFiltersPredicate threadFiltersPredicate;
+
+        private ObservableThreadDump threadDump;
 
         @FXML
         private void initialize() {
@@ -139,28 +131,19 @@ public class ThreadsPane extends AnchorPane {
             threadStateColumn.setCellFactory(param -> new ThreadStateCell());
             threadNameColumn.setCellValueFactory(cellData -> cellData.getValue().getThreadName());
 
-            threadFiltersPredicate = new ThreadFiltersPredicate(null);
-            FilteredList<ThreadElementFx> filteredThreads = new FilteredList<>(threadsFx, threadFiltersPredicate);
-            threadsTable.setItems(filteredThreads);
             threadsTable.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> showThreadDetails(newValue));
         }
 
-        public void setApp(ThreadRayApp app) {
-            // threadsTable.setItems(threadsFx);
-        }
-
         public void update(ThreadDump dump) {
-            this.dump = dump;
-            List<ThreadElement> threads = dump.getThreads();
-            threadsCountLabel.setText(threads.size() + "");
-            threadsFx.clear();
-            threads.stream().forEach(t -> threadsFx.add(new ThreadElementFx(t)));
-            threadDumpTextArea.setText(dump.getText());
+            threadDump = new ObservableThreadDump(dump);
+            threadsCountLabel.setText(threadDump.threadsCountProperty().getValue().toString());
+            threadDumpTextArea.setText(threadDump.getText());
+            threadsTable.itemsProperty().bind(threadDump.threadsProperty());
         }
 
         private void showThreadDetails(ThreadElementFx thread) {
-            threadDumpTextArea.setText(thread != null ? thread.getThreadDump() : dump.getText());
+            threadDumpTextArea.setText(thread != null ? thread.getThreadDump() : threadDump.getText());
         }
 
         /**
@@ -170,7 +153,8 @@ public class ThreadsPane extends AnchorPane {
          * @return Count of this text in the thread dump
          */
         public int countMatches(String text) {
-            return dump.countMatches(text);
+            // return threadDump.countMatches(text);
+            return 0;
         }
     }
 
@@ -183,7 +167,10 @@ public class ThreadsPane extends AnchorPane {
 
         @Override
         protected void updateItem(ThreadElement.State item, boolean empty) {
-            if (item != null) {
+            if (empty) {
+                stateLabel.setText("");
+                stateLabel.getStyleClass().setAll("");
+            } else if (item != null) {
                 stateLabel.setText(item.getState().toString());
                 stateLabel.getStyleClass().setAll(getCssStyle(item.getState().name()));
             } else {
