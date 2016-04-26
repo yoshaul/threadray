@@ -2,20 +2,22 @@ package com.yossis.threadray.model.filter;
 
 import com.yossis.threadray.model.ThreadElement;
 import com.yossis.threadray.parser.StackElement;
+import com.yossis.threadray.util.WildcardMatcher;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * A {@link ThreadFilter} that filters threads by a given pattern.
+ * A {@link ThreadFilter} that filters threads by a given wildcards pattern. <br>
+ * See {@link WildcardMatcher} for more info.
  *
  * @author Yossi Shaul
  */
-public class PatternFilter implements ThreadFilter, Predicate<ThreadElement> {
+public class WildcardFilter implements ThreadFilter, Predicate<ThreadElement> {
 
     private final String pattern;
 
-    public PatternFilter(String pattern) {
+    public WildcardFilter(String pattern) {
         this.pattern = pattern;
     }
 
@@ -29,7 +31,7 @@ public class PatternFilter implements ThreadFilter, Predicate<ThreadElement> {
         List<StackElement> elements = t.getStackElements();
         if (elements != null) {
             for (StackElement se : elements) {
-                if (se.getElement().contains(pattern)) {
+                if (WildcardMatcher.matches(se.getElement(), pattern)) {
                     return true;
                 }
             }

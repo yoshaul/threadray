@@ -2,8 +2,8 @@ package com.yossis.threadray.ui.javafx.model;
 
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
-import com.yossis.threadray.model.filter.PatternFilter;
 import com.yossis.threadray.model.filter.ThreadFilter;
+import com.yossis.threadray.model.filter.WildcardFilter;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -50,7 +50,7 @@ public class ObservableThreadDump {
         return filters;
     }
 
-    public void addFilter(PatternFilter filter) {
+    public void addFilter(WildcardFilter filter) {
         filters.add(filter);
         doFilter();
     }

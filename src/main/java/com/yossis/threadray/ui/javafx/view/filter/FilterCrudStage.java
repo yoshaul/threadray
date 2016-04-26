@@ -1,7 +1,7 @@
 package com.yossis.threadray.ui.javafx.view.filter;
 
-import com.yossis.threadray.model.filter.PatternFilter;
 import com.yossis.threadray.model.filter.ThreadFilter;
+import com.yossis.threadray.model.filter.WildcardFilter;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
@@ -34,7 +34,7 @@ public class FilterCrudStage extends Stage {
 
         Button addBtn = new Button("Add");
         addBtn.setOnAction(e -> {
-            filtersFx.add(new PatternFilter(pattern.getText()));
+            filtersFx.add(new WildcardFilter(pattern.getText()));
             FilterCrudStage.this.hide();
         });
 

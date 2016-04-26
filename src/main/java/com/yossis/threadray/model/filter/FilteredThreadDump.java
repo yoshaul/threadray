@@ -34,7 +34,7 @@ public class FilteredThreadDump {
         return filters == null || filters.stream().allMatch(f -> f.test(t));
     }
 
-    public void addFilter(PatternFilter filter) {
+    public void addFilter(WildcardFilter filter) {
         if (filters == null) {
             filters = new ArrayList<>();
         }

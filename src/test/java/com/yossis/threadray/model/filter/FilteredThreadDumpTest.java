@@ -29,7 +29,7 @@ public class FilteredThreadDumpTest {
     public void filteredThreadDumpWithMatchingFilters() throws IOException, URISyntaxException {
         ThreadDump dump = new Parser(Paths.get(getClass().getResource("/jstack-oracle-jdk-1.8.0_60.tdump").toURI())).parse();
         FilteredThreadDump filtered = new FilteredThreadDump(dump);
-        filtered.addFilter(new PatternFilter("concurrent"));
+        filtered.addFilter(new WildcardFilter("concurrent"));
         assertThat(filtered.getThreads()).isNotEqualTo(dump.getThreads()).hasSize(4);
         // assertNotEquals(dump.getText(), filtered.getText());
     }
@@ -38,7 +38,7 @@ public class FilteredThreadDumpTest {
     public void filteredThreadDumpWithNoMatchingFilters() throws IOException, URISyntaxException {
         ThreadDump dump = new Parser(Paths.get(getClass().getResource("/jstack-oracle-jdk-1.8.0_60.tdump").toURI())).parse();
         FilteredThreadDump filtered = new FilteredThreadDump(dump);
-        filtered.addFilter(new PatternFilter("no such stack element"));
+        filtered.addFilter(new WildcardFilter("no such stack element"));
         assertThat(filtered.getThreads()).hasSize(0);
         // assertEquals("", filtered.getText());
     }
