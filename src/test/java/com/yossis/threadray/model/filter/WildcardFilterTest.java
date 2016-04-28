@@ -21,14 +21,7 @@ public class WildcardFilterTest {
     public void filterMatch() throws Exception {
         ThreadElement t = new ThreadElement("test");
         t.addStackElement(new StackElement("org.test"));
-        assertTrue(new WildcardFilter("org").test(t));
-    }
-
-    @Test
-    public void filterNoMatch() throws Exception {
-        ThreadElement t = new ThreadElement("test");
-        t.addStackElement(new StackElement("org.test"));
-        assertTrue(new WildcardFilter("org").test(t));
+        assertTrue(new WildcardFilter("org*").test(t));
     }
 
     @Test

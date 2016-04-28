@@ -29,7 +29,7 @@ public class FilteredThreadDumpTest {
     public void filteredThreadDumpWithMatchingFilters() throws IOException, URISyntaxException {
         ThreadDump dump = new Parser(Paths.get(getClass().getResource("/jstack-oracle-jdk-1.8.0_60.tdump").toURI())).parse();
         FilteredThreadDump filtered = new FilteredThreadDump(dump);
-        filtered.addFilter(new WildcardFilter("concurrent"));
+        filtered.addFilter(new WildcardFilter("*concurrent*"));
         assertThat(filtered.getThreads()).isNotEqualTo(dump.getThreads()).hasSize(4);
         // assertNotEquals(dump.getText(), filtered.getText());
     }
