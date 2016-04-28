@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -46,7 +47,9 @@ public class ThreadRayApp extends Application {
         createThreadsMainLayout();
         loadLastLocation();
 
-        loadThreadDump(config.getLastOpenFile().toPath());
+        File lastOpenFile = config.getLastOpenFile();
+        Path lastOpen = lastOpenFile != null ? lastOpenFile.toPath() : null;
+        loadThreadDump(lastOpen);
 
         Scene scene = new Scene(rootLayout);
         scene.getStylesheets().add(this.getClass().getResource("/ui/themes/DefaultTheme.css").toExternalForm());
