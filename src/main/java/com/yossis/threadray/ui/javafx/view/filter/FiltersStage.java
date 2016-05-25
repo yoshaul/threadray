@@ -1,6 +1,5 @@
 package com.yossis.threadray.ui.javafx.view.filter;
 
-import com.yossis.threadray.model.filter.ThreadFilter;
 import com.yossis.threadray.ui.javafx.model.ObservableThreadDump;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.beans.property.SimpleStringProperty;
@@ -8,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -22,7 +22,7 @@ import javafx.stage.Stage;
  */
 public class FiltersStage extends Stage {
 
-    private final TableView<ThreadFilter> table;
+    private final TableView<OnOffThreadFilter> table;
 
     public FiltersStage(Stage mainStage, ObservableThreadDump threadDump) {
         initModality(Modality.APPLICATION_MODAL);
@@ -33,13 +33,16 @@ public class FiltersStage extends Stage {
         addBtn.setOnAction(e -> new FilterCrudStage(this, threadDump.getFilters()));
         HBox toolbar = new HBox(10, addBtn);
 
-        TableColumn nameCol = new TableColumn<>("Type");
+        TableColumn<OnOffThreadFilter, Boolean> enabledCol = new TableColumn<>("Enabled");
+        enabledCol.setCellFactory(CheckBoxTableCell.forTableColumn(enabledCol));
+        TableColumn<OnOffThreadFilter, String> nameCol = new TableColumn<>("Type");
         nameCol.setPrefWidth(25);
-        TableColumn valueCol = new TableColumn<>("Value");
+        TableColumn<OnOffThreadFilter, String> valueCol = new TableColumn<>("Value");
         valueCol.setPrefWidth(75);
 
         table = new TableView<>();
-        table.getColumns().addAll(nameCol, valueCol);
+        table.setEditable(true);
+        table.getColumns().addAll(enabledCol, nameCol, valueCol);
         nameCol.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
         valueCol.prefWidthProperty().bind(table.widthProperty().multiply(0.75));
 
@@ -49,20 +52,20 @@ public class FiltersStage extends Stage {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {if (e.getCode() == KeyCode.ESCAPE) this.close();});
         setScene(scene);
 
-        new Controller(threadDump, nameCol, valueCol);
+        new Controller(threadDump, enabledCol, nameCol, valueCol);
 
         show();
     }
 
     private class Controller {
-
         Controller(ObservableThreadDump threadDump,
-                TableColumn<ThreadFilter, String> typeCol,
-                TableColumn<ThreadFilter, String> valueCol) {
+                TableColumn<OnOffThreadFilter, Boolean> enabledCol, TableColumn<OnOffThreadFilter, String> typeCol,
+                TableColumn<OnOffThreadFilter, String> valueCol) {
 
             table.setItems(threadDump.getFilters());
-            typeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getType()));
-            valueCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
+            enabledCol.setCellValueFactory(c -> c.getValue().enabledProperty());
+            typeCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getType()));
+            valueCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().toString()));
         }
     }
 }

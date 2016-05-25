@@ -5,7 +5,6 @@ import com.yossis.threadray.parser.StackElement;
 import com.yossis.threadray.util.WildcardMatcher;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * A {@link ThreadFilter} that filters threads by a given wildcards pattern. <br>
@@ -13,7 +12,7 @@ import java.util.function.Predicate;
  *
  * @author Yossi Shaul
  */
-public class WildcardFilter implements ThreadFilter, Predicate<ThreadElement> {
+public class WildcardFilter implements ThreadFilter {
 
     private final String pattern;
 

@@ -2,8 +2,7 @@ package com.yossis.threadray.ui.javafx.model;
 
 import com.yossis.threadray.model.ThreadDump;
 import com.yossis.threadray.model.ThreadElement;
-import com.yossis.threadray.model.filter.ThreadFilter;
-import com.yossis.threadray.model.filter.WildcardFilter;
+import com.yossis.threadray.ui.javafx.view.filter.OnOffThreadFilter;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -23,14 +22,14 @@ public class ObservableThreadDump {
     private final ObservableList<ThreadElementFx> threads = FXCollections.observableArrayList();
     private final ListProperty<ThreadElementFx> threadsProperty;
     private final IntegerProperty threadsCount;
-    private final ObservableList<ThreadFilter> filters = FXCollections.observableArrayList();
+    private final ObservableList<OnOffThreadFilter> filters = FXCollections.observableArrayList();
     // private final ThreadFiltersPredicate filteredThreads;
 
     public ObservableThreadDump(ThreadDump td) {
         this.td = td;
         td.getThreads().stream().forEach(t -> threads.add(new ThreadElementFx(t)));
         threadsProperty = new SimpleListProperty<>(threads);
-        filters.addListener((ListChangeListener<ThreadFilter>) c -> doFilter());
+        filters.addListener((ListChangeListener<OnOffThreadFilter>) c -> doFilter());
         threadsCount = new SimpleIntegerProperty(threads.size());
     }
 
@@ -46,11 +45,11 @@ public class ObservableThreadDump {
         return threadsCount;
     }
 
-    public ObservableList<ThreadFilter> getFilters() {
+    public ObservableList<OnOffThreadFilter> getFilters() {
         return filters;
     }
 
-    public void addFilter(WildcardFilter filter) {
+    public void addFilter(OnOffThreadFilter filter) {
         filters.add(filter);
         doFilter();
     }

@@ -1,6 +1,5 @@
 package com.yossis.threadray.ui.javafx.view.filter;
 
-import com.yossis.threadray.model.filter.ThreadFilter;
 import com.yossis.threadray.model.filter.WildcardFilter;
 import com.yossis.threadray.ui.javafx.util.UI;
 import javafx.collections.FXCollections;
@@ -22,19 +21,19 @@ import java.util.List;
  * @author Yossi Shaul
  */
 public class FilterCrudStage extends Stage {
-    public FilterCrudStage(Stage parent, List<ThreadFilter> filtersFx) {
+    public FilterCrudStage(Stage parent, List<OnOffThreadFilter> filtersFx) {
         initModality(Modality.APPLICATION_MODAL);
         initOwner(parent);
         UI.setAppIcon(this);
 
-        ComboBox<String> filterTypes = new ComboBox<>(FXCollections.observableArrayList("Pattern", "Regexp"));
+        ComboBox<String> filterTypes = new ComboBox<>(FXCollections.observableArrayList("Wildcard", "Regexp"));
         filterTypes.getSelectionModel().selectFirst();
 
         TextField pattern = new TextField();
 
         Button addBtn = new Button("Add");
         addBtn.setOnAction(e -> {
-            filtersFx.add(new WildcardFilter(pattern.getText()));
+            filtersFx.add(new OnOffThreadFilter(new WildcardFilter(pattern.getText())));
             FilterCrudStage.this.hide();
         });
 
