@@ -31,6 +31,12 @@ public class WildcardFilterTest {
     }
 
     @Test
+    public void filterPatterInThreadName() throws Exception {
+        ThreadElement t = new ThreadElement("pool-thread");
+        assertTrue(new WildcardFilter("pool*").test(t));
+    }
+
+    @Test
     public void testToString() throws Exception {
         assertEquals(new WildcardFilter("**/path").toString(), "**/path");
     }

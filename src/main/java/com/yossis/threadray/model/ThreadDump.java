@@ -1,5 +1,7 @@
 package com.yossis.threadray.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class ThreadDump {
         return text;
     }
 
-    public int countMatches(String text) {
-        return 0;
+    public int countMatches(String textToSearch) {
+        return StringUtils.countMatches(text, textToSearch);
     }
 }

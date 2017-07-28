@@ -109,9 +109,10 @@ public class ThreadsPane extends AnchorPane {
         copy.setOnAction(e -> threadDumpTextArea.copy());
 
         MenuItem count = new MenuItem("Count");
-        copy.setOnAction(e -> {
+        count.setOnAction(e -> {
             String selectedText = threadDumpTextArea.getSelectedText();
-            getController().countMatches(selectedText);
+            int matches = getController().countMatches(selectedText);
+            System.out.println("found: " + matches + " matches");
         });
 
         return new ContextMenu(copy, new SeparatorMenuItem(), count);
@@ -153,8 +154,7 @@ public class ThreadsPane extends AnchorPane {
          * @return Count of this text in the thread dump
          */
         public int countMatches(String text) {
-            // return threadDump.countMatches(text);
-            return 0;
+            return threadDump.countMatches(text);
         }
     }
 

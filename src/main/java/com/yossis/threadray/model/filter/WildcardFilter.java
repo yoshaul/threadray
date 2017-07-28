@@ -27,6 +27,10 @@ public class WildcardFilter implements ThreadFilter {
 
     @Override
     public boolean test(ThreadElement t) {
+        if (WildcardMatcher.matches(t.getName(), pattern)) {
+            return true;
+        }
+
         List<StackElement> elements = t.getStackElements();
         if (elements != null) {
             for (StackElement se : elements) {

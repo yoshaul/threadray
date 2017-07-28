@@ -64,6 +64,10 @@ public class ObservableThreadDump {
         return filters == null || filters.stream().allMatch(f -> f.test(t));
     }
 
+    public int countMatches(String text) {
+        return td.countMatches(text);
+    }
+
     // public ThreadFiltersPredicate getFilteredThreads() {
     //     return filteredThreads;
     // }

@@ -80,8 +80,9 @@ public class ThreadRayApp extends Application {
             stage.setTitle("ThreadRay - " + path.getFileName());
 
             threadsController.update(dump);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            // TODO: print error to the UI
+            e.printStackTrace();
         }
     }
 

@@ -109,7 +109,7 @@ public class Parser {
             thread.setDescription(tokens[i]); // TODO: not the whole tokens
             return thread;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse: " + threadTitle, e);
+            throw new RuntimeException("Failed to parse thread: " + threadTitle, e);
         }
     }
 
